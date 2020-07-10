@@ -96,7 +96,7 @@
                         </connections>
                     </view>
                     <navigationItem key="navigationItem" title="Tip Calculator" id="Ytx-J2-vlq" userLabel="Tip Calculator">
-                        <barButtonItem key="rightBarButtonItem" systemItem="action" id="wKs-VV-tgj">
+                        <barButtonItem key="rightBarButtonItem" systemItem="compose" id="wKs-VV-tgj">
                             <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <connections>
                                 <segue destination="H5j-ee-fUd" kind="show" id="0ex-rI-yGw"/>
