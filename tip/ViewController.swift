@@ -16,6 +16,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var totalLabel: UILabel!
     @IBOutlet weak var customTip: UITextField!
     @IBOutlet weak var percentLabel: UILabel!
+    @IBOutlet weak var calculationsView: UIView!
     
     let currencyFormatter = NumberFormatter()
     let percentFormatter = NumberFormatter()
@@ -27,9 +28,9 @@ class ViewController: UIViewController {
         percentFormatter.numberStyle  = .percent
     }
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
+        calculationsView.isHidden = true
         billAmountTextField.becomeFirstResponder()
         createNumFormatter()
         navigationItem.backBarButtonItem = UIBarButtonItem(
@@ -42,12 +43,16 @@ class ViewController: UIViewController {
         tipControl.selectedSegmentIndex = UserDefaults.standard.integer(forKey: "index")
         calculation(percent: tipPercentages[tipControl.selectedSegmentIndex])
         
-        
     }
     
     func calculation(percent: Double){
+        self.calculationsView.alpha = 0
+        calculationsView.isHidden = false
+        UIView.animate(withDuration: 0.6,
+                       animations: { [weak self] in
+                        self?.calculationsView.alpha = 1.0
+        })
         let bill = Double(billAmountTextField.text!) ?? 0
-        print(bill)
         let tip = bill * percent
         let total = bill + tip
         percentLabel.text = percentFormatter.string(from: NSNumber(value: percent))
@@ -56,19 +61,15 @@ class ViewController: UIViewController {
     }
     @IBAction func onTap(_ sender: Any) {
         view.endEditing(true)
-    }
-    
-    @IBAction func customTipSubmit(_ sender: Any) {
-        if(customTip.text != ""){
-            calculation(percent: (Double(customTip.text!) ?? 0) / 100)
-        } else {
-            calculation(percent: tipPercentages[tipControl.selectedSegmentIndex])
-        }
         customTip.text = ""
+    }
+    @IBAction func customTipChange(_ sender: UITextField) {
+        calculation(percent: (Double(customTip.text!) ?? 0) / 100)
     }
     
     @IBAction func calculateTip(_ sender: Any) {
         calculation(percent: tipPercentages[tipControl.selectedSegmentIndex])
+        customTip.text = ""
     }
     
     
