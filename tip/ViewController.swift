@@ -5,6 +5,10 @@
 //  Created by Timothy Nguyen on 7/9/20.
 //  Copyright © 2020 Codepath. All rights reserved.
 //
+/*
+Source for show/hide calculations animation:
+https://stackoverflow.com/questions/50851374/animation-show-and-hide-view-in-swift
+*/
 
 import UIKit
 
@@ -35,14 +39,11 @@ class ViewController: UIViewController {
         navigationItem.backBarButtonItem = UIBarButtonItem(
             title: "Back", style: .plain, target: nil, action: nil)
         calculationsView.isHidden = true
-        // Do any additional setup after loading the view.
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tipControl.selectedSegmentIndex = UserDefaults.standard.integer(forKey: "index")
-//        calculation(percent: tipPercentages[tipControl.selectedSegmentIndex])
-        
     }
     
     func calculation(percent: Double){
@@ -68,15 +69,8 @@ class ViewController: UIViewController {
     }
     
     @IBAction func calculateTip(_ sender: Any) {
-        /*
-         if text field is empty
-            hide sub view
-         else {
-            
-         }
-         */
+        
         if let text = billAmountTextField.text, text.isEmpty{
-            print("1")
             UIView.animate(withDuration: 0.6,
                            animations: { [weak self] in
                             self?.calculationsView.alpha = 0.0
@@ -84,7 +78,6 @@ class ViewController: UIViewController {
                 self?.calculationsView.isHidden = true
             }
         } else {
-            print("2")
             calculation(percent: tipPercentages[tipControl.selectedSegmentIndex])
         }
         customTip.text = ""
