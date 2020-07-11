@@ -30,18 +30,18 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        calculationsView.isHidden = true
         billAmountTextField.becomeFirstResponder()
         createNumFormatter()
         navigationItem.backBarButtonItem = UIBarButtonItem(
             title: "Back", style: .plain, target: nil, action: nil)
+        calculationsView.isHidden = true
         // Do any additional setup after loading the view.
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tipControl.selectedSegmentIndex = UserDefaults.standard.integer(forKey: "index")
-        calculation(percent: tipPercentages[tipControl.selectedSegmentIndex])
+//        calculation(percent: tipPercentages[tipControl.selectedSegmentIndex])
         
     }
     
@@ -68,10 +68,29 @@ class ViewController: UIViewController {
     }
     
     @IBAction func calculateTip(_ sender: Any) {
-        calculation(percent: tipPercentages[tipControl.selectedSegmentIndex])
+        /*
+         if text field is empty
+            hide sub view
+         else {
+            
+         }
+         */
+        if let text = billAmountTextField.text, text.isEmpty{
+            print("1")
+            UIView.animate(withDuration: 0.6,
+                           animations: { [weak self] in
+                            self?.calculationsView.alpha = 0.0
+            }) { [weak self] _ in
+                self?.calculationsView.isHidden = true
+            }
+        } else {
+            print("2")
+            calculation(percent: tipPercentages[tipControl.selectedSegmentIndex])
+        }
         customTip.text = ""
     }
     
+
     
 }
 
