@@ -59,26 +59,13 @@ class ViewController: UIViewController {
                        animations: { [weak self] in
                         self?.calculationsView.alpha = 1.0
         })
+        
         let bill = Double(billAmountTextField.text!) ?? 0
         let tip = bill * percent
         let total = bill + tip
-        if splitField.text?.isEmpty ?? true {
-            UIView.animate(withDuration: 0.6,
-                           animations: { [weak self] in
-                            self?.splitView.alpha = 0.0
-            }) { [weak self] _ in
-                self?.splitView.isHidden = true
-            }
-        } else {
-            let split = Double(splitField.text!) ?? 0
-            let splitTotal = total / split
-            splitLabel.text = currencyFormatter.string(from: NSNumber(value: splitTotal))
-            splitView.isHidden = false
-            UIView.animate(withDuration: 0.6,
-                           animations: { [weak self] in
-                            self?.splitView.alpha = 1.0
-            })
-        }
+        let split = Double(splitField.text!) ?? 1
+        let splitTotal = total / split
+        splitLabel.text = currencyFormatter.string(from: NSNumber(value: splitTotal))
         percentLabel.text = percentFormatter.string(from: NSNumber(value: percent))
         tipAmountLabel.text = currencyFormatter.string(from: NSNumber(value: tip))
         totalLabel.text = currencyFormatter.string(from: NSNumber(value: total))
@@ -86,8 +73,6 @@ class ViewController: UIViewController {
     }
     @IBAction func onTap(_ sender: Any) {
         view.endEditing(true)
-//        customTip.text = ""
-//        splitField.text = ""
     }
 
     @IBAction func calculateTip(_ sender: Any) {
@@ -100,10 +85,25 @@ class ViewController: UIViewController {
                 self?.calculationsView.isHidden = true
             }
         } else {
+            if splitField.text?.isEmpty ?? true {
+                print("split is empty")
+                UIView.animate(withDuration: 0.6,
+                               animations: { [weak self] in
+                                self?.splitView.alpha = 0.0
+                }) { [weak self] _ in
+                    self?.splitView.isHidden = true
+                }
+            } else {
+                self.splitView.alpha = 0
+                splitView.isHidden = false
+                UIView.animate(withDuration: 0.6,
+                               animations: { [weak self] in
+                                self?.splitView.alpha = 1.0
+                })
+            }
+            
             if customTip.text?.isEmpty ?? true {
                 calculation(percent: tipPercentages[tipControl.selectedSegmentIndex])
-                print("customTip is empty | selectedSegmentIndex: " + String(tipControl.selectedSegmentIndex))
-                
             } else {
                 calculation(percent: (Double(customTip.text!) ?? 0) / 100)
             }
