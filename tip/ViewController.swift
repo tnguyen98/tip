@@ -21,6 +21,9 @@ class ViewController: UIViewController {
     @IBOutlet weak var customTip: UITextField!
     @IBOutlet weak var percentLabel: UILabel!
     @IBOutlet weak var calculationsView: UIView!
+    @IBOutlet weak var splitView: UIView!
+    @IBOutlet weak var splitLabel: UILabel!
+    @IBOutlet weak var splitField: UITextField!
     
     let currencyFormatter = NumberFormatter()
     let percentFormatter = NumberFormatter()
@@ -39,11 +42,14 @@ class ViewController: UIViewController {
         navigationItem.backBarButtonItem = UIBarButtonItem(
             title: "Back", style: .plain, target: nil, action: nil)
         calculationsView.isHidden = true
+        splitView.isHidden = true
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tipControl.selectedSegmentIndex = UserDefaults.standard.integer(forKey: "index")
+        calculateTip(self)
+        
     }
     
     func calculation(percent: Double){
@@ -56,21 +62,37 @@ class ViewController: UIViewController {
         let bill = Double(billAmountTextField.text!) ?? 0
         let tip = bill * percent
         let total = bill + tip
+        if splitField.text?.isEmpty ?? true {
+            UIView.animate(withDuration: 0.6,
+                           animations: { [weak self] in
+                            self?.splitView.alpha = 0.0
+            }) { [weak self] _ in
+                self?.splitView.isHidden = true
+            }
+        } else {
+            let split = Double(splitField.text!) ?? 0
+            let splitTotal = total / split
+            splitLabel.text = currencyFormatter.string(from: NSNumber(value: splitTotal))
+            splitView.isHidden = false
+            UIView.animate(withDuration: 0.6,
+                           animations: { [weak self] in
+                            self?.splitView.alpha = 1.0
+            })
+        }
         percentLabel.text = percentFormatter.string(from: NSNumber(value: percent))
         tipAmountLabel.text = currencyFormatter.string(from: NSNumber(value: tip))
         totalLabel.text = currencyFormatter.string(from: NSNumber(value: total))
+        
     }
     @IBAction func onTap(_ sender: Any) {
         view.endEditing(true)
-        customTip.text = ""
+//        customTip.text = ""
+//        splitField.text = ""
     }
-    @IBAction func customTipChange(_ sender: UITextField) {
-        calculation(percent: (Double(customTip.text!) ?? 0) / 100)
-    }
-    
+
     @IBAction func calculateTip(_ sender: Any) {
         
-        if let text = billAmountTextField.text, text.isEmpty{
+        if billAmountTextField.text?.isEmpty ?? true{
             UIView.animate(withDuration: 0.6,
                            animations: { [weak self] in
                             self?.calculationsView.alpha = 0.0
@@ -78,9 +100,15 @@ class ViewController: UIViewController {
                 self?.calculationsView.isHidden = true
             }
         } else {
-            calculation(percent: tipPercentages[tipControl.selectedSegmentIndex])
+            if customTip.text?.isEmpty ?? true {
+                calculation(percent: tipPercentages[tipControl.selectedSegmentIndex])
+                print("customTip is empty | selectedSegmentIndex: " + String(tipControl.selectedSegmentIndex))
+                
+            } else {
+                calculation(percent: (Double(customTip.text!) ?? 0) / 100)
+            }
         }
-        customTip.text = ""
+
     }
     
 
